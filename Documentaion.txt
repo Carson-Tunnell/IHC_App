@@ -1,0 +1,109 @@
+Documentation for Code found in this repo.
+
+Distance.py
+    debug = boolean 
+        boolean to enable or disable debug statments in the code
+        
+    def load_shp(filename,simple=True)
+        Arguments:
+            filename: string
+                filepath to Shape file directory to open
+            simple(optional): boolean  
+                boolean over whether networkx will simplify graph
+                simplify on some graphs can cause issues as paths 
+                will not be found due to new topology
+        Purpose:
+            loads the shapefile from the path specified
+            generated a networkx graph object from shape file
+            turns graph from directed to undirected to ease path finding later
+        Return: networkx graph
+            returns and undirected networkx graph object
+
+    def correct_graph(graph)
+        Arguments:
+            graph: networkx graph
+                networkx undirected graph that is being used in the program
+                should be created from load_shp() function
+        Purpose:
+            when reading in shapefile networkx will duplicated and create new nodes
+            and edges. The new points will have their metadata duplicated from the 
+            points and edges they are based on.  This leads to inaccurate distances
+            when using precomputed distances from a shapefile.  This function iterates
+            through all the points and uses the haversine() function to generate new 
+            distances for every edge. New distance data is saved as a length attribute.
+            This is used later for shortest_path() and created a weighted graph
+        Return: networkx graph
+            networkx graph where all edges now have a length attribute in addition topology
+            attributes from the shapefile
+
+    def haversine(lon1, lat1, lon2, lat2)
+        Arguments:
+            lon1: float
+                longitude of first point in degrees decimal
+            lat1: float
+                latitiude of first point in degrees decimal
+            lon2: float
+                longitude of second point in degrees decimal
+            lat2: float
+                latitiude of second point in degrees decimal
+        Purpose:
+            Calculates the greater circle distance between two points given
+            used to add length attribute to edges when called by correct_graph()
+            uses math library
+        Return: float
+            returns a distance in miles between the two given points
+
+    def closest_node(start,graph,first = 5.00,second = 50.00)
+        Arguments:
+            start: Tuple (Lat,Long)
+                tuple of (lat,long) in decimal degrees to find closest node
+            graph: networkx graph
+                networkx graph that is being used in the program
+            first(optional): float
+                how many miles the nearest node must be for first iteration
+            second(optional): float
+                how many miles the nearest node must be if not found in the
+                first iterate.  A backup plan
+        Purpose:
+            takes a Tuple of (lat,long) in decimal degrees and looks for the closest
+            node in the grap that the given node is near.  When the node is found it
+            will be returned.  The loop looks for nodes that are first distance away 
+            from the start node by using the haversine() function.  If no nodes are 
+            found to be first miles away the function will loop again.  This second 
+            loop it will look for nodes that are second miles away by using the 
+            haversine().  If no nodes are found nearby the function will return none
+            and print "NO NODES FOUND: RETURNED HOME"
+        Return: float || None
+            Node object from the graph
+            NONE if no node found and a print statement
+    def shortest_path(start_point,end_point,graph)
+        Arguments:
+            start_point: tuple(float,float)
+                tuple of (lat,long) in decimal degrees
+            end_point: tuple(float,float)
+                tuple of (lat,long) in decimal degrees
+            graph: networkx graph
+                networkx graph that the program is currently using
+        Purpose:
+            Find the shortest path between two (lat,long) points.  Calls
+            closest_node() in order to find nearest nodes for given points.
+            Once nodes are found then runs the shortest_path_length() 
+            from networkx to find shortest weighted path from stat and end 
+            nodes.  Weight is based on the length attribute that each edge
+            should have. if node is NONE then networkx shortest_path_length()
+            will default to Calculating shortest distance to every node in 
+            the graph and return a dict of distances.  If no path is found 
+            function will return -1.0
+        Return: float,dict
+            if path is found correctly function will return the path 
+            if no path is found function returns -1.0
+            if no node is specified it will return a dict of distances to 
+            every node in the graph
+
+
+Input.py
+
+Driver.py
+
+Driver_Threaded.py
+  
