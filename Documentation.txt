@@ -102,6 +102,38 @@ Distance.py
 
 
 Input.py
+    debug = boolean 
+        boolean to enable or disable debug statments in the code
+    def open_file(filename):
+        Arguments:
+            filename: string
+                filepath to CSV file to open
+        Purpose:
+            opens a file given a filename
+        Return: file
+            returns a file object
+           
+    def find_columns(file):
+        Arguments:
+            file: file
+                takes a file that is already open 
+        Purpose:
+            designed to read the header line from the open file and 
+            determine which columns the data is stored in.  Uses 
+            string matching so columns must be labeled correctly to 
+            be discovered correctly.  
+        Return: 
+           
+    def read_line(columns,file):
+        Arguments:
+        Purpose:
+        Return: 
+           
+    def read_line_given(columns,line):
+        Arguments:
+        Purpose:
+        Return: 
+           
 
 Driver.py
 
