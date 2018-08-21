@@ -1,5 +1,7 @@
 Documentation for Code found in this repo.
 
+----------------------------------------------------Distance Code----------------------------------------------------
+
 Distance.py
     debug = boolean 
         boolean to enable or disable debug statments in the code
@@ -76,6 +78,33 @@ Distance.py
         Return: float || None
             Node object from the graph
             NONE if no node found and a print statement
+
+    def find_long(start):
+        Arguments:
+            start: tuple(Lat,Long)
+        Purpose:
+        Return:
+    def find_lat(start):
+        Arguments:
+        Purpose:
+        Return:
+    def intersect(a, b):
+        Arguments:
+        Purpose:
+        Return:
+    def generate_globals(graph):
+        Arguments:
+        Purpose:
+        Return:
+    def closest_node_optimized(start,graph):
+        Arguments:
+        Purpose:
+        Return:
+    def find_nearest(start,valid_nodes):
+        Arguments:
+        Purpose:
+        Return:
+
     def shortest_path(start_point,end_point,graph)
         Arguments:
             start_point: tuple(float,float)
@@ -104,6 +133,7 @@ Distance.py
 Input.py
     debug = boolean 
         boolean to enable or disable debug statments in the code
+    
     def open_file(filename):
         Arguments:
             filename: string
@@ -116,26 +146,101 @@ Input.py
     def find_columns(file):
         Arguments:
             file: file
-                takes a file that is already open 
+                takes a file that is already open
         Purpose:
             designed to read the header line from the open file and 
             determine which columns the data is stored in.  Uses 
             string matching so columns must be labeled correctly to 
-            be discovered correctly.  
-        Return: 
+            be discovered accurately.  
+        Return: [list],[list]
+            returns two lists
+                first list is a list of indexes for the columns in the
+                header row.  
+                    [0]: start_lat
+                    [1]: start_long
+                    [2]: dest_lat
+                    [3]: dest_long
+                    [4]: dist column for output
+                second list is the header row itself split by commas
+                Each entry is a column title and is used for output later
            
     def read_line(columns,file):
-        Arguments:
+        Arguments: 
+            columns: [list]
+                columns list from find_columns function. Used to index the 
+                next line in file
+            file: file
+                file that we will be pulling lines from. Typically the CSV
+                with all the data rows
         Purpose:
-        Return: 
+            processes the next row of data in the file CSV. Uses the column[]
+            to determine where data is saved when the row is split(","). The
+            fuction seeks out the start and end points and saves their lat,long
+            as a tuple for each point.  Casts the lat and long to floats for use
+            later as tuples(float,float) to find nodes
+        Return: string,Tuple(Float,Float),Tuple(Float,Float)
+            return the entire line that was read by the function as well as two 
+            Tuples. One for the starting location start_tuple(lat,long) and One
+            for the destination dest_tuple(lat,long) where lat and long are floats
+
            
     def read_line_given(columns,line):
         Arguments:
+            columns: [list]
+                columns list from find_columns function. Used to index the 
+                next line in file
+            line: string
+                a single line from the file to be processed in a CSV format
+
         Purpose:
-        Return: 
-           
+            Similar to read_line but instead of a file we are given only a line
+            this was done to help multiprocessing as now we can break up indexes
+            and send only the rows we need to this function.
+        Return: string,Tuple(Float,Float),Tuple(Float,Float)
+            return the entire line that was read by the function as well as two 
+            Tuples. One for the starting location start_tuple(lat,long) and One
+            for the destination dest_tuple(lat,long) where lat and long are floats
 
-Driver.py
 
-Driver_Threaded.py
-  
+
+
+Driver_Multiprocesses.py
+    def calc_distance(row,columns,results,start_index,end_index,graph)
+        Arguments:
+            row: [list]
+                subset of the overall rows to be processed. broken up based
+                on number of processes running
+            columns: [list]
+                columns list from find_columns function. Used to index the 
+                next line in file
+            results:  multiprocessing.Array[]
+                shared memory array where each processes gets select indexes
+                where the processes returns the result of the calc_distance
+            start_index: int
+                index in results to start saving data to
+            end_index: int
+                index in results to stop saving data to
+            graph: networkx graph
+                networkx undirected graph that is being used in the program
+                should be created from load_shp() function
+        Purpose:
+            This function is given to a process when the processes is created. 
+            the function will go for (end_index - start_index) iterations and 
+            Calculates the distance between the two nodes that are extracted 
+            from the rows array.  Each entry in rows is a row from the CSV and
+            the function will find the start and end locations and find the
+            distance between them.  The resulting float is then stored in the
+            shared memory array results between the given indexes. Prints are
+            output along the way to show progress and once it has completed its
+            subset of the work.
+        Return: None
+            all returns are done by inputting data into the shared memory array
+            that the main processes can access later
+
+---------------------------------------------------- Optimization Code----------------------------------------------------
+
+cvxopt_helpers.py
+
+Reader.py
+
+Optimize_Driver.py
